@@ -1,0 +1,15 @@
+Django>=3.0
+googletrans==4.0.0-rc1
+nltk
+PyMuPDF
+asyncio
+python-docx
+pandas
+scikit-learn
+wordcloud
+matplotlib
+numpy
+openai
+requests
+beautifulsoup4
+selenium
