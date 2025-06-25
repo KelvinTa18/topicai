@@ -1,0 +1,316 @@
+{% extends 'template.html' %}
+{% block button %}
+    <a href="{% url 'main_page:read' %}" type="button" class="btn btn-rounded btn-success">
+    <span class="btn-icon-left text-success">
+        <i class="fa fa-share-alt color-success"></i>
+    </span>By Upload
+    </a>
+{% endblock button %}
+{% block content %}
+
+<form action="{% url 'main_page:scrape'%}" method='post'  enctype="multipart/form-data">
+{% csrf_token %}
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header d-block">
+                    <h4 class="card-title">Input the Link</h4>
+                    <p class="mb-0 subtitle">Anda bisa menginput dengan link, sehingga kami dapat melakukan</p>
+                    <p class="mb-0 subtitle">penerimaan domain -> pengecekan domain -> melakukan crawing (cek path yang ada di domain tersebut) -> melakukan scraping (pengambilan text yang ada di path-path yang sudah di crawing)</p>
+                </div>
+                <div class="card-body">
+                    <h4 class="card-title">Link</h4>
+                    <div class="basic-form custom_file_input">
+                        <div class="input-group">
+                            <div class="custom-file">
+                                <input type="url" id="urlInput" name="text" class="form-control" placeholder="https://contoh.com">
+                            </div>
+                            <div class="input-group-append">
+                                <button id="startButton" class="btn btn-primary" onclick="startStream()" type="button">Search & Crawing Domain</button>
+                            </div>
+                            <div class="input-group-append" hidden>
+                                <button class="btn btn-primary" onclick="checkDomain()" type="button">Search</button>
+                            </div>
+                        </div>
+                        <div class="form-group mt-3">
+                            <textarea class="form-control"  minlength="100" rows="4" id="inputText" name="inputText" style="display:none;" required placeholder="Masukkan teks di sini or Upload the file"></textarea>
+                        </div>
+                        <div id="result" style="margin-top:10px;"></div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="text-center my-2" style="display:none;" id='buttonCluster'>
+                <button class="btn btn-success">
+                    Cluster the Data
+                    <span class="btn-icon-right"><i class="fa fa-check"></i></span>
+                </button>
+            </div>
+            <div class="card mt-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Result</h4>
+                    </div>
+                    <div class="card-body">
+                        <!-- Nav tabs -->
+                        <div class="default-tab">
+                            <ul class="nav nav-tabs" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active" data-toggle="tab" href="#home">Text Mining</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-toggle="tab" href="#profile">WordCloud</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-toggle="tab" href="#contact">AI Detection</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-toggle="tab" href="#message">Analysis</a>
+                                </li>
+                            </ul>
+                            <div class="tab-content">
+                                <div class="tab-pane fade show active" id="home" role="tabpanel">
+                                    <div class="pt-4">
+                                        <div class="basic-list-group">
+                                            <ul class="list-group">
+                                                {% if keywords %}
+
+                                                    {% for keyword, n in keywords %}
+                                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                    {{ keyword }}<span class="badge badge-primary badge-pill">{{ n }}</span>
+                                                    </li>
+
+                                                    {% endfor %}
+                                                {% else %}
+                                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                    Please Input your data first <span class="badge badge-primary badge-pill">None</span>
+                                                </li>
+                                                {% endif %}
+
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="profile">
+                                    <div class="pt-4">
+                                        {% if image_base64 %}
+                                            <img src="data:image/png;base64,{{ image_base64 }}" alt="Word Cloud" style="width: 100%; height: auto;">
+                                        {% endif %}
+
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="contact">
+                                    <div class="pt-4">
+                                        <div class="basic-list-group">
+                                            <ul class="list-group">
+                                                {% if form %}
+                                                <div class="card-body text-center">
+                                                    <div class="m-t-10">
+                                                        <div id="morris-bar-chart" hidden></div>
+                                                        <h4 class="card-title">Accuracy AI on your Data</h4>
+                                                        {% if persentage.passed < 15 %}
+                                                        <h2 class="mt-3">Perhatian: Data yang Anda masukkan kemungkinan besar tidak relevan dengan bidang Akuntansi atau Keuangan.</h2>
+
+                                                        {% elif persentage.passed < 30 %}
+                                                        <h2 class="mt-3">Perlu Diperiksa: Data yang Anda masukkan mungkin kurang relevan dengan Akuntansi atau Ekonomi.</h2>
+
+                                                        {% elif persentage.passed < 55 %}
+                                                        <h2 class="mt-3">Cukup Baik: Data yang Anda masukkan kemungkinan berkaitan dengan Akuntansi atau Ekonomi.</h2>
+
+                                                        {% else %}
+                                                        <h2 class="mt-3">Valid: Data yang Anda masukkan tampaknya relevan dengan Akuntansi atau Ekonomi.</h2>
+                                                        {% endif %}
+                                                    </div>
+                                                    <!-- Circle progress -->
+                                                    <div class="position-relative mx-auto" style="width: 120px; height: 120px;">
+                                                        <canvas id="feedbackCircle" width="120" height="120"></canvas>
+                                                        <i class="ti-control-shuffle" style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); color:#999; font-size:24px;"></i>
+                                                    </div>
+                                                    <ul class="widget-line-list m-b-15">
+                                                        <li class="border-right"> {{persentage.passed}}% <br><span class="text-success"><i
+                                                                    class="ti-hand-point-up"></i>Positive</span></li>
+                                                        <li>{{persentage.failed}}% <br><span class="text-danger"><i
+                                                                    class="ti-hand-point-down"></i>Negative</span></li>
+                                                    </ul>
+                                                </div>
+                                                    {% for cluster_label, jumlah in form.items %}
+                                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                    {{ cluster_label }}<span class="badge badge-primary badge-pill">{{ jumlah }}%</span>
+                                                    </li>
+
+                                                    {% endfor %}
+
+                                                {% else %}
+                                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                    Please Input your data first <span class="badge badge-primary badge-pill">None</span>
+                                                </li>
+                                                {% endif %}
+
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="message">
+                                    <div class="pt-4">
+                                    {% if result_from_api_model_ai %}
+                                        <h4>The Result Analysis from Deepseek : </h4>
+                                        <p>{{result_from_api_model_ai}}</p>
+                                    {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script>
+    function handleFileChange() {
+        const fileInput = document.getElementById("fileInput");
+        const fileLabel = document.getElementById("fileLabel");
+        const inputText = document.getElementById("inputText");
+
+        if (fileInput.files.length > 0) {
+        const fileName = fileInput.files[0].name;
+        fileLabel.innerText = fileName;
+
+        inputText.disabled = true;
+        inputText.required = false;
+        inputText.value = "";
+        inputText.placeholder = "Input manual dinonaktifkan karena file telah dipilih";
+
+        // Ubah warna background dan teks saat disabled
+        inputText.style.backgroundColor = "#f0f0f0"; // warna abu muda
+        inputText.style.color = "#888";              // warna teks abu gelap
+        } else {
+        fileLabel.innerText = "Choose file";
+
+        inputText.disabled = false;
+        inputText.required = false;
+        inputText.placeholder = "Masukkan teks di sini or Upload the file";
+
+        // Kembalikan warna normal
+        inputText.style.backgroundColor = "#ffffff"; // putih
+        inputText.style.color = "#000";              // hitam
+        }
+    }
+
+    function clearFileInput() {
+        const fileInput = document.getElementById("fileInput");
+        fileInput.value = "";
+
+        handleFileChange(); // agar textarea aktif kembali & label reset
+    }
+
+    // Inisialisasi saat halaman dimuat
+    window.onload = checkFileSelected;
+</script>
+<script>
+  const canvas = document.getElementById('feedbackCircle');
+  const ctx = canvas.getContext('2d');
+  const percent = parseFloat({{persentage.passed}}/100); // 82%
+  const startAngle = -0.5 * Math.PI;
+  const endAngle = (2 * Math.PI * percent) + startAngle;
+
+  // background circle
+  ctx.lineWidth = 10;
+  ctx.strokeStyle = '#e5e5e5';
+  ctx.beginPath();
+  ctx.arc(60, 60, 50, 0, 2 * Math.PI);
+  ctx.stroke();
+
+  // progress circle
+  ctx.strokeStyle = '#a187e9';
+  ctx.beginPath();
+  ctx.arc(60, 60, 50, startAngle, endAngle);
+  ctx.stroke();
+</script>
+<script>
+function checkDomain() {
+    const urlInput = document.getElementById("urlInput").value;
+    const resultDiv = document.getElementById("result");
+
+    if (!urlInput) {
+        resultDiv.textContent = "⚠️ Masukkan link terlebih dahulu.";
+        resultDiv.style.color = "orange";
+        return;
+    }
+
+    fetch("{% url 'main_page:check_domain' %}", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": "{{ csrf_token }}"
+        },
+        body: JSON.stringify({ link: urlInput })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.found && data.crawlable) {
+            resultDiv.innerHTML = `✅ Domain ditemukan dan bisa di-crawling. <br>Jumlah hasil: <strong>${data.count}</strong>`;
+            resultDiv.style.color = "green";
+        } else if (data.found && !data.crawlable) {
+            resultDiv.textContent = "❌ Domain ditemukan, tetapi tidak bisa di-crawling.";
+            resultDiv.style.color = "orange";
+        } else {
+            resultDiv.textContent = "❌ Domain tidak valid atau tidak ditemukan.";
+            resultDiv.style.color = "red";
+        }
+    })
+    .catch(error => {
+        console.error("Error:", error);
+        resultDiv.textContent = "⚠️ Terjadi kesalahan saat memeriksa domain.";
+        resultDiv.style.color = "gray";
+    });
+}
+</script>
+
+<script>
+    function startStream() {
+        const output = document.getElementById("result");
+        const url = document.getElementById("urlInput").value;
+        const textarea = document.getElementById("inputText");
+        const buttonCluster = document.getElementById("buttonCluster");
+        const startButton = document.getElementById("startButton");
+        startButton.disabled = true;
+        output.textContent = "⏳ Memulai proses...\n";
+
+        // Reset textarea, sembunyikan dulu
+        textarea.style.display = "none";
+        buttonCluster.style.display = "none";
+        textarea.value = "";
+
+        const encodedURL = encodeURIComponent(url);
+        const eventSource = new EventSource(`/stream/?link=${encodedURL}`);
+
+        // Tangani event 'progress' dari server
+        eventSource.addEventListener("progress", function(event) {
+            output.textContent = event.data + "\n";
+            output.scrollTop = output.scrollHeight; // auto scroll ke bawah
+            startButton.disabled = false;
+        });
+        // Tangkap event result_text → tampilkan dan isi textarea
+        eventSource.addEventListener("result_text", function(event) {
+            const decodedText = JSON.parse(event.data); // ← decode dari JSON
+            textarea.style.display = "block";
+            buttonCluster.style.display = "block";
+            textarea.value = decodedText; // ← tampilkan hasil scraping
+            startButton.disabled = false;
+        });
+        eventSource.onerror = function() {
+            eventSource.close();
+            startButton.disabled = false;
+        };
+    }
+
+  </script>
+
+
+{% endblock content %}
+
+
+

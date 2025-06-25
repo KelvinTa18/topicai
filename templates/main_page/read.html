@@ -1,0 +1,236 @@
+{% extends 'template.html' %}
+{% block button %}
+    <a href="{% url 'main_page:scrape' %}" type="button" class="btn btn-rounded btn-secondary">
+    <span class="btn-icon-left text-secondary">
+        <i class="fa fa-share-alt color-secondary"></i>
+    </span>By Link
+    </a>
+{% endblock %}
+{% block content %}
+
+<form action="{% url 'main_page:read'%}" method='post'  enctype="multipart/form-data">
+{% csrf_token %}
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header d-block">
+                    <h4 class="card-title">Input the Data</h4>
+                    <p class="mb-0 subtitle">Anda bisa menginput dengan text langsung ataupun menginput dengan file (.pdf or .docx)</p>
+                </div>
+                <div class="card-body">
+                    <h4 class="card-title">Text</h4>
+                    <div class="basic-form">
+                        <div class="form-group">
+                            <textarea class="form-control"  minlength="100" rows="4" id="inputText" name="inputText" required placeholder="Masukkan teks di sini or Upload the file"></textarea>
+                        </div>
+                    </div>
+
+                    <h4 class="card-title">Upload File</h4>
+                    <div class="basic-form custom_file_input">
+                        <div class="input-group">
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input" id="fileInput" onchange="handleFileChange()" name="inputFile"  accept=".pdf,.docx">
+                                <label class="custom-file-label" for="fileInput" id="fileLabel">Choose file</label>
+                            </div>
+                            <div class="input-group-append">
+                                <button class="btn btn-primary" onclick="clearFileInput()" type="button">Clear</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center my-2">
+                <button class="btn btn-success">
+                    Cluster the Data
+                    <span class="btn-icon-right"><i class="fa fa-check"></i></span>
+                </button>
+            </div>
+            <div class="card mt-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Result</h4>
+                    </div>
+                    <div class="card-body">
+                        <!-- Nav tabs -->
+                        <div class="default-tab">
+                            <ul class="nav nav-tabs" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active" data-toggle="tab" href="#home">Text Mining</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-toggle="tab" href="#profile">WordCloud</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-toggle="tab" href="#contact">AI Detection</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-toggle="tab" href="#message">Analysis</a>
+                                </li>
+                            </ul>
+                            <div class="tab-content">
+                                <div class="tab-pane fade show active" id="home" role="tabpanel">
+                                    <div class="pt-4">
+                                        <div class="basic-list-group">
+                                            <ul class="list-group">
+                                                {% if keywords %}
+
+                                                    {% for keyword, n in keywords %}
+                                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                    {{ keyword }}<span class="badge badge-primary badge-pill">{{ n }}</span>
+                                                    </li>
+
+                                                    {% endfor %}
+                                                {% else %}
+                                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                    Please Input your data first <span class="badge badge-primary badge-pill">None</span>
+                                                </li>
+                                                {% endif %}
+
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="profile">
+                                    <div class="pt-4">
+                                        {% if image_base64 %}
+                                            <img src="data:image/png;base64,{{ image_base64 }}" alt="Word Cloud" style="width: 100%; height: auto;">
+                                        {% endif %}
+
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="contact">
+                                    <div class="pt-4">
+                                        <div class="basic-list-group">
+                                            <ul class="list-group">
+                                                {% if form %}
+                                                <div class="card-body text-center">
+                                                    <div class="m-t-10">
+                                                        <div id="morris-bar-chart" hidden></div>
+                                                        <h4 class="card-title">Accuracy AI on your Data</h4>
+                                                        {% if persentage.passed < 15 %}
+                                                        <h2 class="mt-3">Perhatian: Data yang Anda masukkan kemungkinan besar tidak relevan dengan bidang Akuntansi atau Keuangan.</h2>
+
+                                                        {% elif persentage.passed < 30 %}
+                                                        <h2 class="mt-3">Perlu Diperiksa: Data yang Anda masukkan mungkin kurang relevan dengan Akuntansi atau Ekonomi.</h2>
+
+                                                        {% elif persentage.passed < 55 %}
+                                                        <h2 class="mt-3">Cukup Baik: Data yang Anda masukkan kemungkinan berkaitan dengan Akuntansi atau Ekonomi.</h2>
+
+                                                        {% else %}
+                                                        <h2 class="mt-3">Valid: Data yang Anda masukkan tampaknya relevan dengan Akuntansi atau Ekonomi.</h2>
+                                                        {% endif %}
+                                                    </div>
+                                                    <!-- Circle progress -->
+                                                    <div class="position-relative mx-auto" style="width: 120px; height: 120px;">
+                                                        <canvas id="feedbackCircle" width="120" height="120"></canvas>
+                                                        <i class="ti-control-shuffle" style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); color:#999; font-size:24px;"></i>
+                                                    </div>
+                                                    <ul class="widget-line-list m-b-15">
+                                                        <li class="border-right"> {{persentage.passed}}% <br><span class="text-success"><i
+                                                                    class="ti-hand-point-up"></i>Positive</span></li>
+                                                        <li>{{persentage.failed}}% <br><span class="text-danger"><i
+                                                                    class="ti-hand-point-down"></i>Negative</span></li>
+                                                    </ul>
+                                                </div>
+                                                    {% for cluster_label, jumlah in form.items %}
+                                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                    {{ cluster_label }}<span class="badge badge-primary badge-pill">{{ jumlah }}%</span>
+                                                    </li>
+
+                                                    {% endfor %}
+
+                                                {% else %}
+                                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                    Please Input your data first <span class="badge badge-primary badge-pill">None</span>
+                                                </li>
+                                                {% endif %}
+
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="message">
+                                    <div class="pt-4">
+                                    {% if result_from_api_model_ai %}
+                                        <h4>The Result Analysis from Deepseek : </h4>
+                                        <p>{{result_from_api_model_ai}}</p>
+                                    {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script>
+    function handleFileChange() {
+        const fileInput = document.getElementById("fileInput");
+        const fileLabel = document.getElementById("fileLabel");
+        const inputText = document.getElementById("inputText");
+
+        if (fileInput.files.length > 0) {
+        const fileName = fileInput.files[0].name;
+        fileLabel.innerText = fileName;
+
+        inputText.disabled = true;
+        inputText.required = false;
+        inputText.value = "";
+        inputText.placeholder = "Input manual dinonaktifkan karena file telah dipilih";
+
+        // Ubah warna background dan teks saat disabled
+        inputText.style.backgroundColor = "#f0f0f0"; // warna abu muda
+        inputText.style.color = "#888";              // warna teks abu gelap
+        } else {
+        fileLabel.innerText = "Choose file";
+
+        inputText.disabled = false;
+        inputText.required = true;
+        inputText.placeholder = "Masukkan teks di sini or Upload the file";
+
+        // Kembalikan warna normal
+        inputText.style.backgroundColor = "#ffffff"; // putih
+        inputText.style.color = "#000";              // hitam
+        }
+    }
+
+    function clearFileInput() {
+        const fileInput = document.getElementById("fileInput");
+        fileInput.value = "";
+
+        handleFileChange(); // agar textarea aktif kembali & label reset
+    }
+
+    // Inisialisasi saat halaman dimuat
+    window.onload = checkFileSelected;
+</script>
+<script>
+  const canvas = document.getElementById('feedbackCircle');
+  const ctx = canvas.getContext('2d');
+  const percent = parseFloat({{persentage.passed}}/100); // 82%
+  const startAngle = -0.5 * Math.PI;
+  const endAngle = (2 * Math.PI * percent) + startAngle;
+
+  // background circle
+  ctx.lineWidth = 10;
+  ctx.strokeStyle = '#e5e5e5';
+  ctx.beginPath();
+  ctx.arc(60, 60, 50, 0, 2 * Math.PI);
+  ctx.stroke();
+
+  // progress circle
+  ctx.strokeStyle = '#a187e9';
+  ctx.beginPath();
+  ctx.arc(60, 60, 50, startAngle, endAngle);
+  ctx.stroke();
+</script>
+
+
+{% endblock content %}
+
+
+

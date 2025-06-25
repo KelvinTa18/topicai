@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+{% load static %}
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>UIB - Clustering Data</title>
+    <!-- Favicon icon -->
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+
+      href="{% static 'images/favicon.png' %} "
+    />
+    <link rel="stylesheet" href=" {% static 'vendor/owl-carousel/css/owl.carousel.min.css' %} ">
+    <link rel="stylesheet" href=" {% static 'vendor/owl-carousel/css/owl.theme.default.min.css' %} ">
+    <link href=" {% static 'vendor/jqvmap/css/jqvmap.min.css' %} " rel="stylesheet">
+    <!-- Custom Stylesheet -->
+    <link href=" {% static 'css/style.css' %} " rel="stylesheet" />
+  </head>
+
+  <body>
+    <!--*******************
+        Preloader start
+    ********************-->
+    <div id="preloader">
+      <div class="sk-three-bounce">
+        <div class="sk-child sk-bounce1"></div>
+        <div class="sk-child sk-bounce2"></div>
+        <div class="sk-child sk-bounce3"></div>
+      </div>
+    </div>
+    <!--*******************
+        Preloader end
+    ********************-->
+
+    <!--**********************************
+        Main wrapper start
+    ***********************************-->
+    <div id="main-wrapper">
+      <!--**********************************
+            Nav header start
+        ***********************************-->
+      <div class="nav-header">
+        <a href="index.html' %}" class="brand-logo">
+          <img class="logo-abbr" src="{% static 'images/logo.png' %} " alt="" />
+          <img
+            class="logo-compact"
+            src="{% static 'images/logo-text.png' %} "
+            alt=""
+          />
+          <img
+            class="brand-title"
+            src="{% static 'images/logo-text.png' %} "
+            alt=""
+          />
+        </a>
+
+
+      </div>
+      <!--**********************************
+            Nav header end
+        ***********************************-->
+
+      <!--**********************************
+            Header start
+        ***********************************-->
+      <div class="header">
+        <div class="header-content">
+            <nav class="navbar navbar-expand">
+                <div class="collapse navbar-collapse justify-content-between">
+                    <div class="header-content" style="text-align: center;">
+                      <h1 style="color: #FAFAFA; font-size: 36px; font-weight: bold; margin: 20px 0;">
+                        Welcome to Website "Content Clustering"
+                      </h1>
+                    </div>
+
+                  <button class="btn btn-rounded btn-outline-light custom-hover"  data-toggle="modal" data-target=".bd-example-modal-lg">
+                    Information
+                  </button>
+
+                </div>
+            </nav>
+          </div>
+      </div>
+
+
+      <!--**********************************
+            Content body start
+        ***********************************-->
+      <div class="content-body">
+        <div class="container-fluid">
+          <div class="row page-titles mx-0">
+              <div class="col-sm-12 p-md-0">
+                 <div class="welcome-text">
+                  <div class="d-flex justify-content-between align-items-center" style="margin-bottom: 12px;">
+                    <h4 style="font-size: 28px; font-weight: bold; margin: 0;">
+                      Hi, Selamat datang di Sistem Analisis Teks Otomatis.
+                    </h4>
+                    <div>
+                      {% block button %}
+                      {% endblock button %}
+                    </div>
+                  </div>
+                  <span class="ml-1" style="font-size: 18px; text-align: justify; display: block;">
+                    &nbsp;&nbsp;&nbsp;Aplikasi ini membantu Anda mengelompokkan data teks ke dalam kategori atau topik tertentu secara otomatis dan cerdas, menggunakan teknologi clustering berbasis machine learning. Dengan sistem ini, proses analisis data yang sebelumnya memakan waktu kini dapat dilakukan secara efisien, akurat, dan terstruktur. Kami berharap sistem yang kami buat dapat membantu anda, terima kasih.
+                  </span>
+                </div>
+              </div>
+
+          </div>
+
+          {% block content %}
+          {% endblock content %}
+        </div>
+      </div>
+      <div class="footer">
+        <div class="copyright">
+
+          <p>
+            Website Developed by Kelvin Tang & Paerin
+          </p>
+        </div>
+      </div>
+
+    </div>
+    <!-- Required vendors -->
+    <script src="{% static 'vendor/global/global.min.js' %} "></script>
+    <script src="{% static 'js/quixnav-init.js' %} "></script>
+    <script src="{% static 'js/custom.min.js' %} "></script>
+    <!-- Vectormap -->
+    <script src="{% static 'vendor/raphael/raphael.min.js' %}"></script>
+    <script src="{% static 'vendor/morris/morris.min.js' %}"></script>
+
+
+    <script src="{% static 'vendor/circle-progress/circle-progress.min.js' %}"></script>
+    <script src="{% static 'vendor/chart.js/Chart.bundle.min.js' %}"></script>
+
+    <script src="{% static 'vendor/gaugeJS/dist/gauge.min.js' %}"></script>
+
+    <!--  flot-chart js -->
+    <script src="{% static 'vendor/flot/jquery.flot.js' %}"></script>
+    <script src="{% static 'vendor/flot/jquery.flot.resize.js' %}"></script>
+
+    <!-- Owl Carousel -->
+    <script src="{% static 'vendor/owl-carousel/js/owl.carousel.min.js' %}"></script>
+
+    <!-- Counter Up -->
+    <script src="{% static 'vendor/jqvmap/js/jquery.vmap.min.js' %}"></script>
+    <script src="{% static 'vendor/jqvmap/js/jquery.vmap.usa.js' %}"></script>
+    <script src="{% static 'vendor/jquery.counterup/jquery.counterup.min.js' %}"></script>
+
+
+    <script src="{% static 'js/dashboard/dashboard-1.js' %}"></script>
+  </body>
+</html>
+
+
+
+<!-- Modal -->
+<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Information</h5>
+                <button type="button" class="close" data-dismiss="modal"><span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+            <div class="card">
+              <div class="card-header">
+                  <h4 class="card-title">List Information</h4>
+              </div>
+              <div class="card-body">
+                  <div class="basic-list-group">
+                      <div class="row">
+                          <div class="col-lg-6 col-xl-2">
+                              <div class="list-group mb-4 " id="list-tab" role="tablist"><a class="list-group-item list-group-item-action active" id="list-home-list" data-toggle="list" href="#list-home" role="tab">Intro</a> <a class="list-group-item list-group-item-action" id="list-profile-list"
+                                      data-toggle="list" href="#list-profile" role="tab">Profile</a> <a class="list-group-item list-group-item-action" id="list-messages-list" data-toggle="list" href="#list-messages" role="tab">Flow</a>
+                                  <a
+                                      class="list-group-item list-group-item-action" id="list-settings-list" data-toggle="list" href="#list-settings" role="tab">Contact</a>
+                              </div>
+                          </div>
+                          <div class="col-lg-6 col-xl-10">
+                              <div class="tab-content" id="nav-tabContent">
+                                  <div class="tab-pane fade show active" id="list-home">
+                                      <h4 class="mb-4">Introduction</h4>
+                                      <p>Halaman ini memberikan pengantar mengenai tujuan dan cakupan situs resmi Universitas Internasional Batam (UIB). Pengunjung akan mendapatkan gambaran umum tentang fungsi utama website serta manfaat yang dapat diperoleh dalam mengakses informasi akademik dan layanan institusi secara digital.</p>
+                                  </div>
+                                  <div class="tab-pane fade" id="list-profile" role="tabpanel">
+                                      <h4 class="mb-4">Profile UIB</h4>
+                                      <p>Halaman profil ini menampilkan informasi mendalam mengenai Universitas Internasional Batam, termasuk sejarah pendirian, visi dan misi, nilai-nilai institusi, serta struktur organisasi. Tujuannya adalah memberikan pemahaman yang utuh tentang identitas dan arah strategis UIB kepada mahasiswa, mitra, dan masyarakat umum.</p>
+                                  </div>
+                                  <div class="tab-pane fade" id="list-messages">
+                                      <h4 class="mb-4">Cara Penggunaan Website</h4>
+                                      <p>Halaman ini berisi panduan singkat dan praktis bagi pengguna dalam menavigasi berbagai fitur yang tersedia di situs UIB. Mulai dari pencarian informasi akademik, akses ke layanan mahasiswa, hingga penggunaan formulir digital — semuanya dijelaskan agar pengunjung dapat memanfaatkan website secara optimal.</p>
+                                  </div>
+                                  <div class="tab-pane fade" id="list-settings">
+                                      <h4 class="mb-4"> Contact</h4>
+                                      <p>Halaman kontak menyediakan informasi resmi untuk menghubungi pihak Universitas Internasional Batam. Tersedia alamat, nomor telepon, email, serta formulir online untuk memudahkan komunikasi dan pengajuan pertanyaan, keluhan, maupun kerja sama.</p>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
