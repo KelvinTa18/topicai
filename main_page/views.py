@@ -43,10 +43,10 @@ def get_topic_from_article_byAPI(data, request):
         "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",
     ]
     BASE_URL = "https://openrouter.ai/api/v1"
-    current_url = request.build_absolute_uri()
+    current_url = BASE_URL
     title_url = "Topicai"
     MODEL = "deepseek/deepseek-chat-v3:free"
-
+    error = ""
     for key in API_KEYS:
         try:
             client = OpenAI(
@@ -69,17 +69,19 @@ def get_topic_from_article_byAPI(data, request):
             )
             return completion.choices[0].message.content
 
-        except RateLimitError:
+        except RateLimitError as e:
             # Coba key berikutnya
             print(RateLimitError)
+            error = f"❌ Semua API key telah mencapai batas pemakaian (rate limit)"
             continue
 
         except Exception as e:
             # Untuk error lainnya (jaringan, invalid API key, dsb.)
-            return f"❌ Gagal dengan error: {e}"
+            error = f"❌ Sedang ada error, tolong hubungi administration."
             continue
 
-    return "❌ Semua API key telah mencapai batas pemakaian (rate limit)."
+
+    return error
 
 # Create your views here.
 def read(request:HttpRequest):
