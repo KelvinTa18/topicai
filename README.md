@@ -18,7 +18,7 @@ How to Set Up and Run the Application
 
 # 4. Download Required NLTK Data
 
-  Open Python and run the following code:
+  Open Python and run the following code (one time only):
   
           import nltk
           nltk.download('punkt')
